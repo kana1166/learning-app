@@ -1,6 +1,6 @@
 # @format
 
-name: PR Checks
+name: Laravel CI
 
 on:
   pull_request:
@@ -8,22 +8,55 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: laravel
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
         with:
-          node-version: "14"
+          php-version: "8.0"
+          extensions: mbstring, pdo, mysql
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
+
+      - name: Copy .env.example to .env
+        run: cp .env.example .env
+
+      - name: Set up environment variables
+        run: |
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=laravel" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=root" >> .env
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate
 
       - name: Run tests
-        run: npm test
+        run: php artisan test
 
       - name: Comment test results
         if: failure()
@@ -32,7 +65,7 @@ jobs:
           script: |
             const { github, context } = require('@actions/github');
             const issue_number = context.payload.pull_request.number;
-            const { data: comment } = await github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               ...context.repo,
               issue_number,
               body: `❌ Tests failed. Please review the errors and try again.`
@@ -45,7 +78,7 @@ jobs:
           script: |
             const { github, context } = require('@actions/github');
             const issue_number = context.payload.pull_request.number;
-            const { data: comment } = await github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               ...context.repo,
               issue_number,
               body: `✅ All tests passed! Great job!`
