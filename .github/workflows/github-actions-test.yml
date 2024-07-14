@@ -1,0 +1,52 @@
+# @format
+
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Comment test results
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { github, context } = require('@actions/github');
+            const issue_number = context.payload.pull_request.number;
+            const { data: comment } = await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number,
+              body: `❌ Tests failed. Please review the errors and try again.`
+            });
+
+      - name: Comment success
+        if: success()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { github, context } = require('@actions/github');
+            const issue_number = context.payload.pull_request.number;
+            const { data: comment } = await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number,
+              body: `✅ All tests passed! Great job!`
+            });
