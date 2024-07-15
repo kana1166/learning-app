@@ -4,6 +4,11 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Web\ScheduleController as WebScheduleController;
+use App\Http\Controllers\Web\LearningUserController as WebLearningUserController;
+use App\Http\Controllers\Web\RecordController as WebRecordController;
+use App\Http\Controllers\Web\DayOfWeekController as WebDayOfWeekController;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -18,10 +23,19 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/user', function () {
+    return Inertia::render('User');
+})->middleware(['auth', 'verified'])->name('user');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::resource('schedules', WebScheduleController::class);
+Route::resource('learning-users', WebLearningUserController::class);
+Route::resource('records', WebRecordController::class);
+Route::resource('day-of-week', WebDayOfWeekController::class);
 
 require __DIR__.'/auth.php';
