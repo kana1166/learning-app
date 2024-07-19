@@ -38,10 +38,24 @@ const showingNavigationDropdown = ref(false);
                                     Dashboard
                                 </NavLink>
                                 <NavLink
-                                    :href="route('user')"
-                                    :active="route().current('user')"
+                                    :href="route('learning-user.index')"
+                                    :active="
+                                        route().current('learning-user.index')
+                                    "
                                 >
-                                    Users
+                                    ユーザー管理
+                                </NavLink>
+                                <NavLink
+                                    :href="route('schedules.index')"
+                                    :active="route().current('schedules.index')"
+                                >
+                                    スケジュール
+                                </NavLink>
+                                <NavLink
+                                    :href="route('records.index')"
+                                    :active="route().current('records.index')"
+                                >
+                                    レコード
                                 </NavLink>
                             </div>
                         </div>

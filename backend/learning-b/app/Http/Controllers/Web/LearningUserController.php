@@ -6,19 +6,21 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\LearningUser;
 
+use Inertia\Inertia;
+
 class LearningUserController extends Controller
 {
     public function index()
     {
-        $LearningUsers = LearningUser::all();
-        return inertia()->render('LearningUsers/Index', [
-            'LearningUsers' => $LearningUsers,
+        $learningUsers = LearningUser::all();
+        return Inertia::render('LearningUsers/Index', [
+            'users' => $learningUsers,
         ]);
     }
 
     public function create()
     {
-        return inertia()->render('LearningUsers/Create');
+        return Inertia::render('LearningUsers/Create');
     }
 
     public function store(Request $request)
@@ -26,21 +28,16 @@ class LearningUserController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email',
-            'password' => 'required|string',
         ]);
-        LearningUser::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-        return redirect()->route('learning_users.index');
+        LearningUser::create($request->all());
+        return redirect()->route('learning-user.index');
     }
 
     public function show(string $id)
     {
         $learning_user = LearningUser::findOrFail($id);
         return inertia()->render('LearningUsers/Show', [
-            'learning_user' => $learning_user,
+            'learning-user' => $learning_user,
         ]);
     }
 
@@ -48,8 +45,8 @@ class LearningUserController extends Controller
     public function edit(string $id)
     {
         $learning_user = LearningUser::findOrFail($id);
-        return inertia()->render('LearningUsers/Edit', [
-            'learning_user' => $learning_user,
+        return Inertia::render('LearningUsers/Edit', [
+            'learning-user' => $learning_user,
         ]);
     }
 
@@ -58,22 +55,23 @@ class LearningUserController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email',
-            'password' => 'required|string',
         ]);
 
         $learning_user = LearningUser::findOrFail($id);
-        $learning_user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-        return redirect()->route('learning_users.index');
+        $learning_user->update($request->all());
+        return redirect()->route('learning-user.index')->with('success', 'User updated successfully.');
     }
 
     
-    public function destroy(string $id)
-    {
-        LearningUser::destroy($id);
-        return redirect()->route('learning_users.index');
+    public function destroy($id)
+{
+    $learning_user = LearningUser::findOrFail($id);
+
+    if ($learning_user) {
+        $learning_user->delete();
     }
+
+    return redirect()->route('learning-user.index')->with('success', 'User deleted successfully.');
+}
+
 }

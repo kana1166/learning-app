@@ -17,8 +17,7 @@ class RecordController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'record_id' => 'required|uuid',
-            'user_id' => 'required|exists:users,user_id',
+            'user_id' => 'required|exists:learning_user,user_id',
             'date' => 'required|date',
             'duration' => 'required|integer',
             'note' => 'nullable|string',
@@ -37,7 +36,7 @@ class RecordController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,user_id',
+            'user_id' => 'required|exists:learning_user,user_id',
             'date' => 'required|date',
             'duration' => 'required|integer',
             'note' => 'nullable|string',

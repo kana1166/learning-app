@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Http\Controllers\ProfileController;
@@ -34,7 +35,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('schedules', WebScheduleController::class);
-Route::resource('learning-users', WebLearningUserController::class);
+Route::resource('learning-user', WebLearningUserController::class);
 Route::resource('records', WebRecordController::class);
 Route::resource('day-of-week', WebDayOfWeekController::class);
 

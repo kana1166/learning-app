@@ -9,13 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('records', function (Blueprint $table) {
-            $table->string('record_id')->primary();
-            $table->string('user_id');
+            $table->uuid('record_id')->primary();
+            $table->uuid('user_id');
             $table->date('date');
             $table->integer('duration');
             $table->text('note')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->foreign('user_id')->references('user_id')->on('learning_user')->onDelete('cascade');
         });
     }
 

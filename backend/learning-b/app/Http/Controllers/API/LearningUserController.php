@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\LearningUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 
 class LearningUserController extends Controller
@@ -16,21 +17,20 @@ class LearningUserController extends Controller
 
     public function store(Request $request)
     {
+        Log::info('Request Data: ', $request->all());
         $request->validate([
-            'user_id' => 'required|string|unique:learning_user,user_id',
-            'firebase_id' => 'required|string',
             'email' => 'required|email|unique:learning_user,email',
             'name' => 'required|string',
-            'status' => 'required|string',
         ]);
 
+        Log::info('Validation passed');
+
         $learningUser = LearningUser::create([
-            'user_id' => $request->user_id,
-            'firebase_id' => $request->firebase_id,
             'email' => $request->email,
             'name' => $request->name,
-            'status' => $request->status,
         ]);
+
+        Log::info('LearningUser created: ', $learningUser->toArray());
 
         return response()->json($learningUser, 201);
     }
@@ -44,18 +44,14 @@ class LearningUserController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'firebase_id' => 'required|string',
             'email' => 'required|email|unique:learning_user,email,' . $id . ',user_id',
             'name' => 'required|string',
-            'status' => 'required|string',
         ]);
 
         $learningUser = LearningUser::findOrFail($id);
         $learningUser->update([
-            'firebase_id' => $request->firebase_id,
             'email' => $request->email,
             'name' => $request->name,
-            'status' => $request->status,
         ]);
 
         return response()->json($learningUser, 200);
