@@ -6,19 +6,21 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DayOfWeek;
 
+use Inertia\Inertia;
+
 class DayOfWeekController extends Controller
 {
     public function index()
     {
-        $DayOfWeeks = DayOfWeek::all();
-        return inertia()->render('DayOfWeeks/Index', [
-            'DayOfWeeks' => $DayOfWeeks,
+        $dayOfWeeks = DayOfWeek::all();
+        return Inertia::render('DayOfWeeks/Index', [
+            'dayOfWeeks' => $dayOfWeeks,
         ]);
     }
 
     public function create()
     {
-        return inertia()->render('DayOfWeeks/Create');
+        return inertia::render('DayOfWeeks/Create');
     }
 
     
@@ -27,7 +29,7 @@ class DayOfWeekController extends Controller
         $request->validate([
             'name' => 'required|string',
         ]);
-        $dayOfWeek = DayOfWeek::create($request->all());
+        DayOfWeek::create($request->all());
         return redirect()->route('day_of_weeks.index');
     }
 
@@ -44,7 +46,7 @@ class DayOfWeekController extends Controller
     public function edit(string $id)
     {
         $dayOfWeek = DayOfWeek::findOrFail($id);
-        return inertia()->render('DayOfWeeks/Edit', [
+        return Inertia::render('DayOfWeeks/Edit', [
             'dayOfWeek' => $dayOfWeek,
         ]);
     }

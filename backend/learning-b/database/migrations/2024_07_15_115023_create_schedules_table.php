@@ -10,12 +10,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('schedules', function (Blueprint $table) {
-            $table->string('schedule_id')->primary();
-            $table->string('user_id');
+            $table->uuid('schedule_id')->primary();
+            $table->uuid('user_id');
             $table->string('day_of_week_id');
             $table->integer('duration');
             $table->timestamps();
             $table->softDeletes();
+            $table->foreign('user_id')->references('user_id')->on('learning_user')->onDelete('cascade');
         });
     }
 

@@ -12,6 +12,6 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::apiResource('schedules', ScheduleController::class);
-Route::apiResource('learning_users', LearningUserController::class);
+Route::apiResource('learning_user', LearningUserController::class);
 Route::apiResource('records', RecordController::class);
-Route::apiResource('day_of_weeks', DayOfWeekController::class);
+Route::apiResource('day_of_week', DayOfWeekController::class);

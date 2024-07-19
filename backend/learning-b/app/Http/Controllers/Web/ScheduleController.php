@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 
+use Inertia\Inertia;
+
 
 class ScheduleController extends Controller
 {
@@ -25,7 +27,7 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|uuid|exists:learning_users,user_id',
+            'user_id' => 'required|uuid|exists:learning_user,user_id',
             'day_of_week_id' => 'required|uuid|exists:day_of_week,day_of_week_id',
             'duration' => 'required|integer',
         ]);
@@ -53,7 +55,7 @@ class ScheduleController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'user_id' => 'required|uuid|exists:learning_users,user_id',
+            'user_id' => 'required|uuid|exists:learning_user,user_id',
             'day_of_week_id' => 'required|uuid|exists:day_of_week,day_of_week_id',
             'duration' => 'required|integer',
         ]);

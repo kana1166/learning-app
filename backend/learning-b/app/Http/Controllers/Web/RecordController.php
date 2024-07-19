@@ -6,25 +6,27 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Record;
 
+use Inertia\Inertia;
+
 class RecordController extends Controller
 {
     public function index()
     {
-        $Records = Record::all();
-        return inertia()->render('Records/Index', [
-            'Records' => $Records,
+        $records = Record::all();
+        return Inertia::render('Records/Index', [
+            'records' => $records,
         ]);
     }
 
+
     public function create()
     {
-        return inertia()->render('Records/Create');
+        return Inertia::render('Records/Create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'record_id' => 'required|uuid',
             'user_id' => 'required|exists:users,user_id',
             'date' => 'required|date',
             'duration' => 'required|integer',
@@ -45,7 +47,7 @@ class RecordController extends Controller
     public function edit(string $id)
     {
         $record = Record::findOrFail($id);
-        return inertia()->render('Records/Edit', [
+        return Inertia::render('Records/Edit', [
             'record' => $record,
         ]);
     }
