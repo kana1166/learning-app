@@ -2,7 +2,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import { Inertia } from "@inertiajs/inertia";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import { Ziggy } from "@/ziggy"; // Ziggyのルートをインポート
 
@@ -10,15 +10,10 @@ import { Ziggy } from "@/ziggy"; // Ziggyのルートをインポート
 const props = defineProps({
     users: Array,
 });
-console.log(props.users);
 
 const form = useForm({
     name: "",
     email: "",
-});
-
-onMounted(() => {
-    console.log("Users:", props.users); // デバッグログ
 });
 
 // ユーザー追加の関数
@@ -95,19 +90,12 @@ const refreshUsers = () => {
         </template>
 
         <div>
-            <h1>ユーザー一覧</h1>
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
                         <th
                             scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                            ID
-                        </th>
-                        <th
-                            scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            class="px-[120px] py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                         >
                             名前
                         </th>
@@ -127,10 +115,7 @@ const refreshUsers = () => {
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     <tr v-for="user in users" :key="user.id">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {{ user.user_id }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-[120px] py-4 whitespace-nowrap">
                             <template v-if="editingUser === user.user_id">
                                 <input
                                     v-model="editForm.value.name"
