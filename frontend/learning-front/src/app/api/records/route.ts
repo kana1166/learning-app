@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/learning_user`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/records`;
 
   try {
     const response = await fetch(apiUrl, {
@@ -36,7 +36,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/learning_user/login`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/records`;
   const data = await req.json();
 
   try {
@@ -51,7 +51,46 @@ export async function POST(req: Request) {
     if (!response.ok) {
       console.error("Response not OK:", response.status, response.statusText);
       return NextResponse.json(
-        { error: "ログインに失敗しました" },
+        { error: "レコードの作成に失敗しました" },
+        { status: response.status }
+      );
+    }
+
+    const result = await response.json();
+    return NextResponse.json(result, { status: 200 });
+  } catch (error: any) {
+    console.error("API fetch error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    const url = new URL(req.url);
+    const record_id = url.pathname.split("/").pop();
+
+    if (!record_id) {
+      return NextResponse.json(
+        { error: "レコードIDが見つかりません" },
+        { status: 400 }
+      );
+    }
+
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/records/${record_id}`;
+    const data = await req.json();
+
+    const response = await fetch(apiUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      console.error("Response not OK:", response.status, response.statusText);
+      return NextResponse.json(
+        { error: "レコードの更新に失敗しました" },
         { status: response.status }
       );
     }

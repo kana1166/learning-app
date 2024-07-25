@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LearningUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 
 class LearningUserController extends Controller
@@ -61,5 +62,26 @@ class LearningUserController extends Controller
     {
         LearningUser::destroy($id);
         return response()->json(null, 204);
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'name' => 'required|string',
+        ]);
+
+        $user = LearningUser::where('email', $request->email)->first();
+
+        if ($user && $user->name === $request->name) {
+            // ログイン成功
+            return response()->json([
+                'message' => 'Login successful',
+                'user_id' => $user->user_id // ユーザーIDを追加
+            ], 200);
+        } else {
+            // ログイン失敗
+            return response()->json(['error' => 'Unauthorised'], 401);
+        }
     }
 }

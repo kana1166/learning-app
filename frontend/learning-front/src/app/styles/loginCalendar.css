@@ -1,0 +1,15 @@
+/** @format */
+
+.react-calendar__tile.highlight {
+  background: #b3e5fc !important;
+}
+
+.react-calendar__tile--now {
+  background: none !important;
+  color: black !important;
+}
+
+.react-calendar__tile--active {
+  background: #ffffff !important;
+  color: black !important;
+}

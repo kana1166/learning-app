@@ -1,21 +1,7 @@
 /** @format */
 
-import React from "react";
-import Footer from "./Footer";
-import Header from "./Header";
+import { redirect } from "next/navigation";
 
-const Home: React.FC = () => {
-  return (
-    <>
-      <Header />
-      <div>
-        <br />
-        <br />
-        <br />
-      </div>
-      <Footer />
-    </>
-  );
-};
-
-export default Home;
+export default async function Page() {
+  redirect("/login");
+}

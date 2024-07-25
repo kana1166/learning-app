@@ -1,8 +1,9 @@
 /** @format */
+
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/learning_user`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/schedules`;
 
   try {
     const response = await fetch(apiUrl, {
@@ -36,7 +37,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/learning_user/login`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/schedules`;
   const data = await req.json();
 
   try {
@@ -51,7 +52,7 @@ export async function POST(req: Request) {
     if (!response.ok) {
       console.error("Response not OK:", response.status, response.statusText);
       return NextResponse.json(
-        { error: "ログインに失敗しました" },
+        { error: "レコードの作成に失敗しました" },
         { status: response.status }
       );
     }

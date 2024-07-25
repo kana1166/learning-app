@@ -15,3 +15,4 @@ Route::apiResource('schedules', ScheduleController::class);
 Route::apiResource('learning_user', LearningUserController::class);
 Route::apiResource('records', RecordController::class);
 Route::apiResource('day_of_week', DayOfWeekController::class);
+Route::post('/learning_user/login', [LearningUserController::class, 'login']);
