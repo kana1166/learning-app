@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
+use App\Models\LearningUser;
+
+use Illuminate\Support\Facades\Log;
 
 use Inertia\Inertia;
 
@@ -14,14 +17,16 @@ class ScheduleController extends Controller
     public function index()
     {
         $schedules = Schedule::with('user', 'dayOfWeek')->get();
-    return Inertia()->render('Schedules/Index', [
+        $users = LearningUser::all();
+        return Inertia::render('Schedules/Index', [
         'schedules' => $schedules,
+        'users' => $users,
     ]);
     }
 
     public function create()
     {
-        return Inertia()-> render('Schedules/Create');
+        return Inertia::render('Schedules/Create');
     }
 
     public function store(Request $request)
@@ -38,7 +43,7 @@ class ScheduleController extends Controller
     public function show(string $id)
     {
         $schedule = Schedule::findOrFail($id);
-        return inertia()->render('Schedules/Show', [
+        return inertia::render('Schedules/Show', [
             'schedule' => $schedule,
         ]);
     }
@@ -46,7 +51,7 @@ class ScheduleController extends Controller
     public function edit(string $id)
     {
         $schedule = Schedule::findOrFail($id);
-        return Inertia()->render('Schedules/Edit', [
+        return Inertia::render('Schedules/Edit', [
             'schedule' => $schedule,
         ]);
 
@@ -55,12 +60,19 @@ class ScheduleController extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
+            'learning_user_id' => 'required|exists:learning_user,user_id',
             'day_of_week_id' => 'required|uuid|exists:day_of_week,day_of_week_id',
             'duration' => 'required|integer',
         ]);
+        $validatedData['user_id'] = $validatedData['learning_user_id'];
+        unset($validatedData['learning_user_id']);
+
+        // バリデーションに成功したデータをログに出力
+        Log::info('Validated data:', $validatedData);
         
         $schedule = Schedule::findOrFail($id);
         $schedule->update($validatedData);
+
         return redirect()->route('schedules.index')->with('success', 'Schedule updated successfully.');
     
     }

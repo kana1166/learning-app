@@ -11,8 +11,6 @@ const props = defineProps({
     records: Array,
     users: Array,
 });
-console.log(props.records);
-console.log(props.users);
 
 const form = useForm({
     date: "",
@@ -73,12 +71,10 @@ const editRecord = (record) => {
             note: record.note,
             learning_user_id: record.user_id,
         };
-        console.log("Edit Form:", editForm.value); // デバッグログ
     }
 };
 
 const saveRecord = () => {
-    console.log("Edit Form Data before sending:", editForm);
     Inertia.put(
         route("records.update", { id: editingRecord.value }),
         editForm.value,
@@ -142,12 +138,6 @@ const refreshRecords = () => {
                         >
                             勉強内容
                         </th>
-                        <th
-                            scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                            ユーザーID
-                        </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -191,9 +181,6 @@ const refreshRecords = () => {
                                     v-model="editForm.value.learning_user_id"
                                     class="form-input"
                                 />
-                            </template>
-                            <template v-else>
-                                {{ record.user_id }}
                             </template>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
