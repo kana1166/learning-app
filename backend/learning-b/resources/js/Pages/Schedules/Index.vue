@@ -2,19 +2,47 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import { Inertia } from "@inertiajs/inertia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import { Ziggy } from "@/ziggy"; // Ziggyのルートをインポート
 
 // サーバーから渡されるデータをpropsで受け取ります
 const props = defineProps({
     schedules: Array,
+    users: Array,
 });
+console.log("Schedules:", props.schedules); // デバッグログ
+console.log("Users:", props.users); // デバッグログ
 
 const form = useForm({
     day_of_week_id: "",
     duration: "",
+    user_id: "",
 });
+
+const selectedUserId = ref("");
+
+const filteredSchedules = ref(props.schedules);
+
+const filterSchedulesByUser = (userId) => {
+    selectedUserId.value = userId;
+    if (userId) {
+        filteredSchedules.value = props.schedules.filter(
+            (schedule) => schedule.user_id === userId
+        );
+    } else {
+        filteredSchedules.value = props.schedules;
+    }
+    console.log("Filtered Schedules:", filteredSchedules.value); // デバッグログ
+};
+
+watch(
+    selectedUserId,
+    (newUserId) => {
+        filterSchedulesByUser(newUserId);
+    },
+    { immediate: true }
+);
 
 const deleteSchedule = (id) => {
     if (confirm("本当に削除しますか？")) {
@@ -76,6 +104,16 @@ const refreshSchedules = () => {
         </template>
 
         <div>
+            <select v-model="selectedUserId">
+                <option value="">全て</option>
+                <option
+                    v-for="user in props.users"
+                    :key="user.user_id"
+                    :value="user.user_id"
+                >
+                    {{ user.name }}
+                </option>
+            </select>
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
@@ -94,7 +132,10 @@ const refreshSchedules = () => {
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="schedule in schedules" :key="schedule.id">
+                    <tr
+                        v-for="schedule in filteredSchedules"
+                        :key="schedule.id"
+                    >
                         <td class="px-[120px] py-4 whitespace-nowrap">
                             <template
                                 v-if="editingSchedule === schedule.schedule_id"
