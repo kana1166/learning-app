@@ -12,5 +12,8 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         // CSRF検証を除外したいURIをここに追加します。
         'learning_user/*',
+        'records/*',
+        'records/{id}',
+        '*'
     ];
 }
