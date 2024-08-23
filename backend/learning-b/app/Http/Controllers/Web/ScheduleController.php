@@ -14,14 +14,14 @@ class ScheduleController extends Controller
     public function index()
     {
         $schedules = Schedule::with('user', 'dayOfWeek')->get();
-    return inertia()->render('Schedules/Index', [
+    return Inertia()->render('Schedules/Index', [
         'schedules' => $schedules,
     ]);
     }
 
     public function create()
     {
-        return inertia()-> render('Schedules/Create');
+        return Inertia()-> render('Schedules/Create');
     }
 
     public function store(Request $request)
@@ -46,7 +46,7 @@ class ScheduleController extends Controller
     public function edit(string $id)
     {
         $schedule = Schedule::findOrFail($id);
-        return inertia()->render('Schedules/Edit', [
+        return Inertia()->render('Schedules/Edit', [
             'schedule' => $schedule,
         ]);
 
@@ -54,14 +54,13 @@ class ScheduleController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $request->validate([
-            'user_id' => 'required|uuid|exists:learning_user,user_id',
+        $validatedData = $request->validate([
             'day_of_week_id' => 'required|uuid|exists:day_of_week,day_of_week_id',
             'duration' => 'required|integer',
         ]);
-
+        
         $schedule = Schedule::findOrFail($id);
-        $schedule->update($request->all());
+        $schedule->update($validatedData);
         return redirect()->route('schedules.index')->with('success', 'Schedule updated successfully.');
     
     }

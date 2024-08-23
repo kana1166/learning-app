@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Record;
+use App\Models\LearningUser;
+use Illuminate\Support\Facades\Log;
+
+
 
 use Inertia\Inertia;
 
@@ -13,8 +17,10 @@ class RecordController extends Controller
     public function index()
     {
         $records = Record::all();
+        $users = LearningUser::all();
         return Inertia::render('Records/Index', [
             'records' => $records,
+            'users' => $users,
         ]);
     }
 
@@ -27,7 +33,7 @@ class RecordController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,user_id',
+            'user_id' => 'required|exists:learning_user,user_id',
             'date' => 'required|date',
             'duration' => 'required|integer',
             'note' => 'nullable|string',
@@ -55,17 +61,34 @@ class RecordController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,user_id',
+        try {
+        
+        $validatedData = $request->validate([
+            'learning_user_id' => 'required|exists:learning_user,user_id',
             'date' => 'required|date',
             'duration' => 'required|integer',
             'note' => 'nullable|string',
         ]);
+        $validatedData['user_id'] = $validatedData['learning_user_id'];
+        unset($validatedData['learning_user_id']);
+
+        // バリデーションに成功したデータをログに出力
+        Log::info('Validated data:', $validatedData);
 
         $record = Record::findOrFail($id);
-        $record->update($request->all());
+        $record->update($validatedData);
         return redirect()->route('records.index');
+    } catch (\Exception $e) {
+        Log::error('Error updating record: ' . $e->getMessage(), [
+            'exception' => $e,
+            'request' => $request->all(),
+            'validatedData' => $validatedData ?? null,
+        ]);
+    
+        return redirect()->route('records.index')->with('error', 'An unexpected error occurred.');
     }
+}
+
 
 
     public function destroy(string $id)
